@@ -7,21 +7,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import com.example.ung_dung_thoi_tiet.model.DailyForecast
 
 @Composable
-fun SevenDayForecast() {
+fun SevenDayForecast(daily: List<DailyForecast>) {
     Column(modifier = Modifier.fillMaxWidth()) {
 
         Text(
             text = "Dự báo 7 ngày",
             fontSize = 20.sp,
-            color = Color.Black,
             modifier = Modifier.padding(bottom = 12.dp, start = 8.dp)
         )
 
-        mock7DaysForecast.forEach { item ->
-            DailyForecastItem(item)
+        daily.forEach {
+            DailyForecastItem(it)
         }
     }
 }

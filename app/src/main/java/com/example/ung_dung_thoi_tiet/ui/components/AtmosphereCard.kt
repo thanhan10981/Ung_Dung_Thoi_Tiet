@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// 🎯 Hàm xác định trạng thái + màu theo chuẩn AQI quốc tế
+// 🎯 Chuẩn AQI quốc tế
 fun getAQIStatus(aqi: Int): Triple<String, Color, Color> {
     return when (aqi) {
         in 0..50 -> Triple("Tốt", Color(0xFF2E7D32), Color(0xFFD4F7D4))
@@ -25,20 +25,32 @@ fun getAQIStatus(aqi: Int): Triple<String, Color, Color> {
     }
 }
 
+// 🧮 Tính AQI từ PM2.5 (EPA – rút gọn)
+fun calculateAQIFromPM25(pm25: Double): Int {
+    return when {
+        pm25 <= 12 -> (pm25 / 12 * 50).toInt()
+        pm25 <= 35 -> 50 + ((pm25 - 12) / 23 * 50).toInt()
+        pm25 <= 55 -> 100 + ((pm25 - 35) / 20 * 50).toInt()
+        pm25 <= 150 -> 150 + ((pm25 - 55) / 95 * 50).toInt()
+        else -> 200 + ((pm25 - 150) / 150 * 100).toInt()
+    }.coerceIn(0, 500)
+}
+
 @Composable
-fun AtmosphereCard(aqi: Int = 60) {
-
-    // Lấy trạng thái từ bảng chuẩn
+fun AtmosphereCard(
+    pm25: Double,
+    pm10: Double,
+    ozone: Double
+) {
+    val aqi = calculateAQIFromPM25(pm25)
     val (status, textColor, bgColor) = getAQIStatus(aqi)
-
-    // Cho progress chạy theo AQI (tối đa 500)
-    val progress = (aqi.toFloat() / 500f).coerceIn(0f, 1f)
+    val progress = (aqi / 500f).coerceIn(0f, 1f)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White, RoundedCornerShape(20.dp))
-            .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(20.dp))  // ⭐ border
+            .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(20.dp))
             .padding(20.dp)
     ) {
 
@@ -46,7 +58,6 @@ fun AtmosphereCard(aqi: Int = 60) {
 
         Spacer(Modifier.height(12.dp))
 
-        // Chỉ số + trạng thái
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -65,7 +76,6 @@ fun AtmosphereCard(aqi: Int = 60) {
 
         Spacer(Modifier.height(14.dp))
 
-        // ⭐ Thanh progress chạy đúng theo AQI
         Box(
             Modifier
                 .height(8.dp)
@@ -82,14 +92,13 @@ fun AtmosphereCard(aqi: Int = 60) {
 
         Spacer(Modifier.height(16.dp))
 
-        // 3 chỉ số phụ
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            AQISub("PM2.5", "15 µg/m³")
-            AQISub("PM10", "25 µg/m³")
-            AQISub("O³", "62 µg/m³")
+            AQISub("PM2.5", "${pm25.toInt()} µg/m³")
+            AQISub("PM10", "${pm10.toInt()} µg/m³")
+            AQISub("O₃", "${ozone.toInt()} µg/m³")
         }
     }
 }

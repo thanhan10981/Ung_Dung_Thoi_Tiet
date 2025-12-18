@@ -6,18 +6,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.ung_dung_thoi_tiet.model.HourlyForecast
 
 @Composable
-fun HourlyForecastList() {
-
+fun HourlyForecastList(
+    hourly: List<HourlyForecast>
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        mockHourlyForecast.forEach { hour ->
+        hourly.forEach { hour ->
             HourlyForecastCard(hour)
         }
     }
 }
+

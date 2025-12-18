@@ -1,0 +1,52 @@
+package com.example.ung_dung_thoi_tiet.ui.detail
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+@Composable
+fun ForecastTabs(
+    selectedTab: Int,
+    onTabSelected: (Int) -> Unit
+) {
+    val tabs = listOf("24 giờ tới", "48 giờ tới")
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(44.dp)
+            .background(Color(0xFFF0F1F4), RoundedCornerShape(22.dp))
+            .padding(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        tabs.forEachIndexed { index, text ->
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(
+                        if (selectedTab == index) Color.White else Color.Transparent,
+                        RoundedCornerShape(18.dp)
+                    )
+                    .clickable { onTabSelected(index) },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = text,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1
+                )
+            }
+        }
+    }
+}
+

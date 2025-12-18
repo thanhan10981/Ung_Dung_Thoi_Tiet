@@ -1,134 +1,163 @@
 package com.example.ung_dung_thoi_tiet.ui.components
 
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.unit.Dp
+import com.example.ung_dung_thoi_tiet.model.StatModel
+import com.example.ung_dung_thoi_tiet.model.WeatherResponse
 
-data class StatModel(
-    val title: String,
-    val value: String,
-    val subLabel: String,
-    val icon: ImageVector,
-    val color: Color,
-    val showBar: Boolean = false
-)
-
+/* =========================
+   GRID – SOFT GLASS CONTAINER
+   ========================= */
 @Composable
-fun WeatherStatsGrid() {
+fun WeatherStatsGrid(
+    weather: WeatherResponse
+) {
+    val current = weather.current_weather
+    val hourly = weather.hourly
+
+    val humidity = hourly?.relativehumidity_2m?.firstOrNull() ?: 0
+    val windSpeed = current?.windspeed ?: 0.0
+    val feelsLike = current?.temperature?.toInt() ?: 0
+
+    data class FeelInfo(
+        val label: String,
+        val color: Color,
+        val progress: Float
+    )
+
+    fun feelsLikeInfo(temp: Int): FeelInfo = when {
+        temp < 15 -> FeelInfo("Rất lạnh", Color(0xFF42A5F5), temp / 45f)
+        temp < 22 -> FeelInfo("Lạnh", Color(0xFF64B5F6), temp / 45f)
+        temp < 26 -> FeelInfo("Dễ chịu", Color(0xFF66BB6A), temp / 45f)
+        temp < 32 -> FeelInfo("Nóng", Color(0xFFFFA726), temp / 45f)
+        else -> FeelInfo("Rất nóng", Color(0xFFEF5350), temp / 45f)
+    }
+
+    val feels = feelsLikeInfo(feelsLike)
 
     val stats = listOf(
-        StatModel("Cảm giác như", "30°C", "Nóng", Icons.Default.Thermostat, Color(0xFFFF6F00), showBar = true),
-        StatModel("Độ ẩm", "65%", "Vừa phải", Icons.Default.WaterDrop, Color(0xFF2979FF), showBar = true),
-        StatModel("Tốc độ gió", "15 km/h", "Đông Bắc", Icons.Default.Air, Color(0xFF00A86B)),
-        StatModel("Tầm nhìn xa", "10 km", "Rất tốt", Icons.Default.Visibility, Color(0xFF9C27B0)),
-        StatModel("Chỉ số UV", "5", "Trung bình", Icons.Default.WbSunny, Color(0xFFFFC107)),
+        StatModel("Cảm giác như", "$feelsLike°C", feels.label, Icons.Default.Thermostat, feels.color, true, feels.progress),
+        StatModel("Độ ẩm", "$humidity%", "Vừa phải", Icons.Default.WaterDrop, Color(0xFF2979FF), true, humidity / 100f),
+        StatModel("Tốc độ gió", "${windSpeed.toInt()} km/h", "Gió nhẹ", Icons.Default.Air, Color(0xFF00A86B)),
+        StatModel("Tầm nhìn", "10 km", "Rất tốt", Icons.Default.Visibility, Color(0xFF9C27B0)),
+        StatModel("UV", "5", "Trung bình", Icons.Default.WbSunny, Color(0xFFFFC107)),
         StatModel("Áp suất", "1013 hPa", "Ổn định", Icons.Default.Speed, Color(0xFF1565C0))
     )
 
-    stats.chunked(2).forEach { rowItems ->
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            rowItems.forEach { item ->
-                StatItem(
-                    item = item,
-                    modifier = Modifier.weight(1f)
-                )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Color.White.copy(alpha = 0.10f), // 🌫 nền rất nhẹ
+                RoundedCornerShape(22.dp)
+            )
+            .border(
+                1.dp,
+                Color.White.copy(alpha = 0.18f),
+                RoundedCornerShape(22.dp)
+            )
+            .padding(12.dp)
+    ) {
+        stats.chunked(2).forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                row.forEach {
+                    SoftGlassStatItem(it, Modifier.weight(1f))
+                }
+                if (row.size == 1) Spacer(Modifier.weight(1f))
             }
-
-            if (rowItems.size == 1) {
-                Spacer(modifier = Modifier.weight(1f))
-            }
+            Spacer(Modifier.height(12.dp))
         }
-
-        Spacer(Modifier.height(12.dp))
     }
 }
 
+/* =========================
+   STAT ITEM – SOFT GLASS
+   ========================= */
 @Composable
-fun StatItem(
+fun SoftGlassStatItem(
     item: StatModel,
     modifier: Modifier = Modifier,
-    borderWidth: Dp = 1.dp,
-    borderColor: Color = Color(0xFFEEEEEE),
     cornerRadius: Dp = 18.dp
 ) {
     Column(
         modifier = modifier
-            .border(
-                width = borderWidth,
-                brush = SolidColor(borderColor),
-                shape = RoundedCornerShape(cornerRadius)
+            .background(
+                Color.White.copy(alpha = 0.22f), // 🌫 glass mỏng
+                RoundedCornerShape(cornerRadius)
             )
-            .background(Color.White, RoundedCornerShape(cornerRadius))
-            .padding(18.dp)
+            .border(
+                1.dp,
+                Color.White.copy(alpha = 0.30f),
+                RoundedCornerShape(cornerRadius)
+            )
+            .padding(14.dp)
     ) {
 
-        // 🔹 Title + Icon
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                item.icon,
+                imageVector = item.icon,
                 contentDescription = null,
                 tint = item.color
             )
             Spacer(Modifier.width(8.dp))
-            Text(item.title, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+            Text(
+                item.title,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
-        // 🔹 Giá trị chính
         Text(
             item.value,
-            fontSize = 26.sp,
+            fontSize = 23.sp,
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(Modifier.height(6.dp))
-
-        // 🔹 Thanh trạng thái (chỉ hiện khi showBar = true)
         if (item.showBar) {
             Spacer(Modifier.height(6.dp))
-
             Box(
                 modifier = Modifier
-                    .height(6.dp)
+                    .height(4.dp)
                     .fillMaxWidth()
-                    .background(Color(0xFFE5E5E5), RoundedCornerShape(50))
+                    .background(
+                        Color.Black.copy(alpha = 0.10f),
+                        RoundedCornerShape(50)
+                    )
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(0.45f)
+                        .fillMaxWidth(item.progress.coerceIn(0f, 1f))
                         .background(item.color, RoundedCornerShape(50))
                 )
             }
         }
 
-
         Spacer(Modifier.height(6.dp))
 
-        // 🔹 Nhãn phụ
         Text(
             item.subLabel,
             color = item.color,
-            fontSize = 14.sp,
+            fontSize = 13.sp,
             fontWeight = FontWeight.Medium
         )
     }

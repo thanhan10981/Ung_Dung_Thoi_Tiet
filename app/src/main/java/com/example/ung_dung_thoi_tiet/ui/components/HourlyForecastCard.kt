@@ -15,6 +15,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ung_dung_thoi_tiet.R
+import com.example.ung_dung_thoi_tiet.model.HourlyForecast
+import com.example.ung_dung_thoi_tiet.utils.getWeatherIconRes
 
 @Composable
 fun HourlyForecastCard(item: HourlyForecast) {
@@ -40,7 +42,7 @@ fun HourlyForecastCard(item: HourlyForecast) {
             Spacer(Modifier.height(10.dp))
 
             Icon(
-                painter = painterResource(id = getWeatherIconRes(item.iconName)),
+                painter = painterResource(id = getWeatherIconRes(item.weatherCode)),
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.size(32.dp)

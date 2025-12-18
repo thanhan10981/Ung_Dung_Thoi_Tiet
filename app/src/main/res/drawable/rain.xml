@@ -1,0 +1,43 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- ☁️ Cloud (bo tròn, mềm hơn) -->
+    <path
+        android:fillColor="#F1F3F4"
+        android:pathData="
+            M14,25
+            C10,25 7,22 7,18.5
+            C7,15.5 9.2,13 12.1,12.5
+            C13.6,9 17,7 21,7
+            C26.5,7 31,11.5 31,17
+            C34.5,17 38,19.5 38,23
+            C38,26 35.5,28 32.5,28
+            H14
+            Z" />
+
+    <!-- 🌧️ Rain drops (thon, lệch tự nhiên) -->
+    <path
+        android:strokeColor="#4FC3F7"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M18,30 V38" />
+
+    <path
+        android:strokeColor="#4FC3F7"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M24,31 V40" />
+
+    <path
+        android:strokeColor="#4FC3F7"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M30,30 V38" />
+
+</vector>

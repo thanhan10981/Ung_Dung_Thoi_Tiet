@@ -1,77 +1,99 @@
 package com.example.ung_dung_thoi_tiet.ui.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
-
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ung_dung_thoi_tiet.R
-
-
+import com.example.ung_dung_thoi_tiet.utils.currentTime
+import com.example.ung_dung_thoi_tiet.utils.weatherAnimationRes
+import com.example.ung_dung_thoi_tiet.utils.weatherText
 
 @Composable
-fun TodayCard() {
+fun TodayCard(
+    city: String,
+    temperature: Int,
+    weatherCode: Int,
+    highTemp: Int,
+    lowTemp: Int,
+    isNight: Boolean
+) {
+
+    // 🌫 Glass background theo ngày / đêm
+    val glassBackground = if (isNight) {
+        Color(0xFF1C1C1E).copy(alpha = 0.75f)   // 🌙 đêm
+    } else {
+        Color(0xFFF5F5F5).copy(alpha = 0.85f)   // ☀️ ngày
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(20.dp))
+            .background(
+                color = glassBackground,
+                shape = RoundedCornerShape(22.dp)
+            )
             .padding(20.dp)
     ) {
 
+        /* ===== LOCATION ===== */
         Row(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Default.LocationOn, contentDescription = null, tint = Color.Gray)
-            Text("Bình Định, Việt Nam", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            Icon(
+                imageVector = Icons.Default.LocationOn,
+                contentDescription = null,
+                tint = Color.Gray
+            )
+            Spacer(Modifier.width(6.dp))
+            Text(
+                text = city,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold
+            )
         }
 
+        /* ===== TIME ===== */
         Text(
-            "Cập nhật lần cuối: 00:35",
+            text = "Cập nhật: ${currentTime()}",
             fontSize = 13.sp,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            color = Color.Gray
+            color = Color.Gray,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
         Spacer(Modifier.height(16.dp))
 
+        /* ===== WEATHER ANIMATION ===== */
         WeatherAnimation(
-            rawRes = R.raw.sunicon,
+            rawRes = weatherAnimationRes(weatherCode, isNight),
             modifier = Modifier
                 .size(130.dp)
                 .align(Alignment.CenterHorizontally)
         )
 
-
         Spacer(Modifier.height(12.dp))
 
+        /* ===== TEMPERATURE ===== */
         Text(
-            "28°",
+            text = "$temperature°",
             fontSize = 54.sp,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
+        /* ===== DESCRIPTION ===== */
         Text(
-            "Nắng ít mây",
+            text = weatherText(weatherCode),
             fontSize = 18.sp,
             color = Color.Gray,
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -79,15 +101,14 @@ fun TodayCard() {
 
         Spacer(Modifier.height(16.dp))
 
+        /* ===== HIGH / LOW ===== */
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.Center
         ) {
-            Text("Cao: 32°", fontSize = 16.sp)
-            Spacer(Modifier.width(24.dp))   // chỉnh to/nhỏ theo ý bạn
-            Text("Thấp: 24°", fontSize = 16.sp)
+            Text("Cao: $highTemp°", fontSize = 16.sp)
+            Spacer(Modifier.width(24.dp))
+            Text("Thấp: $lowTemp°", fontSize = 16.sp)
         }
-
     }
 }

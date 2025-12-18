@@ -4,8 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +14,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ung_dung_thoi_tiet.R
+import com.example.ung_dung_thoi_tiet.model.DailyForecast
+
+import com.example.ung_dung_thoi_tiet.utils.getWeatherIconRes
 
 @Composable
 fun DailyForecastItem(item: DailyForecast) {
@@ -30,23 +31,23 @@ fun DailyForecastItem(item: DailyForecast) {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        // DAY LABEL
+        // DAY
         Text(
             text = item.dayLabel,
-            modifier = Modifier.weight(1.2f),
-            fontSize = 16.sp,
-            color = Color.Black
+            modifier = Modifier.weight(1.3f),
+            fontSize = 16.sp
         )
 
         // ICON
         Icon(
-            painter = painterResource(id = getDailyIconRes(item.iconName)),
+            painter = painterResource(
+                id = getWeatherIconRes(item.weatherCode)
+            ),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier
-                .size(32.dp)
-                .weight(0.7f)
+            modifier = Modifier.size(32.dp)
         )
+
 
         // STATUS
         Text(
@@ -56,28 +57,19 @@ fun DailyForecastItem(item: DailyForecast) {
             color = Color.Gray
         )
 
-        // HUMIDITY %
-        Text(
-            text = "${item.humidity}%",
-            modifier = Modifier.weight(1f),
-            fontSize = 14.sp,
-            color = Color(0xFF1976D2)
-        )
-
-        // LOW TEMP
+        // LOW
         Text(
             text = "${item.tempLow}°",
-            modifier = Modifier.weight(0.8f),
+            modifier = Modifier.weight(0.7f),
             fontSize = 14.sp,
             color = Color.Gray
         )
 
-        // HIGH TEMP (bold)
+        // HIGH
         Text(
             text = "${item.tempHigh}°",
-            modifier = Modifier.weight(0.8f),
-            fontSize = 16.sp,
-            color = Color.Black
+            modifier = Modifier.weight(0.7f),
+            fontSize = 16.sp
         )
     }
 }
